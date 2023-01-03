@@ -1,0 +1,203 @@
+what happen if two objects are created and called by two different threads;
+
+-----------------------------------------------------
+
+public class Display {
+
+	public synchronized void wish(String name) {
+		for(int i=0;i<10;i++) {
+			System.out.print("Good morning:");
+			
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {	}
+			System.out.println(name);
+			
+		}
+	}
+}
+------------
+
+public class MyThread extends Thread {
+
+	Display d;
+	String name;
+	MyThread(Display d,String name){
+		this.d=d;
+		this.name=name;
+	}
+	public void run() {
+		d.wish(name);
+	}
+}
+--------------------------
+
+public class SynchronizedDemo {
+
+	public static void main(String[] args) {
+		Display d1=new Display();
+		Display d2=new Display();
+		MyThread t1=new MyThread(d1, "Dhoni");
+		MyThread t2=new MyThread(d2,"Yuvaraj");
+		//MyThread t3=new MyThread(d, "Kohli");
+		//MyThread t4=new MyThread(d,"Raina");
+		t1.start();
+		t2.start();
+		//t3.start();
+		//t4.start();
+	}
+}
+===============================================================================
+Case study
+------------
+		Display d1=new Display();
+		Display d2=new Display();
+
+		MyThread t1=new MyThread(d1, "Dhoni");
+		MyThread t2=new MyThread(d2,"Yuvaraj");
+
+		
+		t1.start();
+		t2.start();
+
+
+
+-------------------------------------------------------------------------------------
+
+
++++++++++++
++	  +<----------------t1 --lock(d1)
++   d1	  + .wish("dhoni");
++ +++++++++
+
+
+
++++++++++++
++   	  +<----------------t2--lock(d2)
++   d2 	  + .wish("Yuvaraj");
++++++++++++
+
+---------------------------------------------------------------------------------------------
+
+even though wish method is synchronized we will get irregular output
+
+because threads are operating on different java objects
+-
+--------Coclusion-------------------------
+
+if multiple threads are operating on same java object then synchronization is required
+
+if multiple threads are operating on multiple java objects then synchronization is not required
+
+==============================================================================================================
+Class Level Lock:
+
+EVery class in java has a uniqe lock which is nothing but  class level lock
+
+If a thread want's to execute a static synchronized method then thread required class level lock
+
+once thread got class level lock then it is allowed to execute any static synchronized of that class
+
+Once method execution completes automatically thread releases a lock
+
+
+
+===================
+while a thread executing static synchronized method the remaining threads are not allowed to execute
+any static synchronized method of that class simulaneously but remaing threads are allowed to execute
+
+the following methods simultaneously
+
+1.normal static methhods
+2.synchronized instance methods
+3.normal instance methods
+
+--------------------------------------------------------------------
+
+public class Display {
+	/*
+	//public void displayn() {  
+	 * if we define method as void 
+	 * in this senario it will provide 
+	 * irregular output
+	 */
+	// if we want to execute only one thread at a time
+	// make method as
+	
+	// public synchronized void displayn(){
+	public synchronized void displayn() {
+		for(int i=1;i<=10;i++) {
+		System.out.print(i);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {}
+		
+		
+		}
+	}
+	
+	/*
+	//public void displayc() {  
+	 * if we define method as void 
+	 * in this senario it will provide 
+	 * irregular output
+	 */
+	
+	// if we want to execute only one thread at a time
+	// make method as
+	
+	// public synchronized void displayc(){
+	
+	
+	
+	
+	public synchronized void displayc() {
+		for(int i=65;i<=75;i++) {
+			System.out.print((char)i);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+			
+		}
+	}
+}
+----------------------\
+
+public class MyThread1 extends Thread{
+
+	Display d;
+	MyThread1(Display d){
+		this.d=d;
+		
+	}
+	public void run() {
+		d.displayn();
+	}
+}
+------------------------
+
+public class MyThread2 extends Thread{
+
+	Display d;
+	MyThread2(Display d){
+		this.d=d;
+	}
+	public void run() {
+		d.displayc();
+	}
+}
+=============
+public class SynchroDemo {
+
+	public static void main(String[] args) {
+		Display d=new Display();
+		MyThread1 t1=new MyThread1(d);
+		MyThread2 t2=new MyThread2(d);
+		t1.start();
+		t2.start();
+	}
+}
+-----------------------------------------------------------------
+
+
+

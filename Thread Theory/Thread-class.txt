@@ -1,0 +1,316 @@
+Multi-Threading:
+
+creating thread by extending thread class
+program:
+
+public class Mythread extends Thread{
+
+	public void run(){
+		for(int i=0;i<5;i++){
+		System.out.println("Child Thread");
+		}
+	}
+}
+
+
+
+public class ThreadDemo{
+
+public static void main(String[] args){
+
+Mythread t=new Mythread();
+t.start();
+
+for(int i=0;i<5;i++){
+	System.out.println("Main thread");
+}
+}
+
+
+
+output possibilities:
+
+1} Child Thread
+   Child Thread
+   Child Thread
+   Child Thread
+   Child Thread
+   Main thread
+   Main thread
+   Main thread
+   Main thread
+   Main thread
+
+2}
+Main thread
+Main thread
+Main thread
+Main thread
+Main thread
+Child Thread
+Child Thread
+Child Thread
+Child Thread
+Child Thread
+
+3}
+Child Thread
+Main thread
+Child Thread
+Main thread
+Child Thread
+Main thread
+Child Thread
+Main thread
+Child Thread
+Main thread
+
+
+
+basically  we cannot predict exact execution;
+
+
+
+Thread Schedular;
+-----------------------
+1.	It is the part of JVM
+ 
+2.	It is responsible to schedule threads ,i.e 
+	if multiple threads are waiting to get chance of 
+	execution then in which order threads will be executed is decided by thead schedular
+
+3.	We can't expect exact algorithm follwed by thread schedular ,It is varied from JVM to JVM
+
+	hence we can't expect thread executaion order and exact output
+
+hence whenever situation comes to multithreading there
+is no gurranty for exact output
+
+but  we can provide several possible outputs
+
+
+Difference between start() and run()
+----------------------------------------
+start() 	-> when we call start method a new thread will be created,which is responsible for the execution of run method
+
+run()		->when we call run method there won't be a new thread , the  run method will be executed just like a normal method call my main thead
+
+    hence if we replace t.start() with t.run() 
+then the output is 
+"childthread"*5 times
+followed 
+"main Thread"*5 times
+
+
+This total output produced by  only main thread
+
+
+--------------------------------------------------
+Why we have to call start() method
+
+1.register the thread with thread schedular
+2.perform all other mandotary activities
+3.Invoke run() method
+
+
+
+------------------------------------------
+Importance of thread class start() methd
+
+1. responsible to register the thread with thread Schedular and all other mandotary activities
+
+hence without executing thread class start method there is no chance of starting a new thread in java, dued to this thread class start method is consider as heart of multithreading
+
+start(){
+
+1.Register this thread with thread schedular
+2.Perform all other mandotary activities
+3.Invoke run method
+
+}
+
+--------------------------------------------------------overloading of  run method
+
+is always  possible
+but thread class start method can invoke no argument run method
+the other overladed method we have to call explicitly like a normal method call
+
+--
+public class MyThread extends Thread{
+
+public void run(){
+	System.out.println("no-arg run method");
+	}
+
+public void run(int i){
+	System.out.println("int arg run method");
+	}
+}
+
+------
+public class OverloadRun{
+
+	public static void main(String[] args){
+		MyThread t=new MyThread();
+		t.start();
+	}
+} 
+---------------
+output:	no-arg run method
+
+-----------------------------------------
+
+case 5:
+- If we are not overriding run method
+
+if your not overriding run method then Thread class run method will be executed wich has empty implementation
+
+hence we won't get any output
+
+public class MyThread extends Thread{
+
+}
+
+---
+public class Test{
+
+public static void main(String[] args){
+	MyThread t=new MyThread();
+	t.start();
+	}
+}
+----------------------
+output:
+
+there will be no any output because Thread class has empty run method implementation
+
+Note: It is highly recommeded to override run  method
+other wise don't go for multithreading concept
+------------------------------------------------------
+case 6:
+
+Overriding of start method:
+---
+if we override start method then ,our start method will be executed, just like a normal method call and new thread won't be created
+
+----
+public class MyThread extends Thread{
+	public void start(){
+	System.out.println("start method");
+	}
+	public void run(){
+	System.out.println("run method");
+	}
+}
+----
+public class Test{
+
+public static void main(String[] args){
+	MyThread t=new MyThread();
+	t.start();
+	System.out.println("Main Thread");
+	}
+}
+
+-----------------
+
+total output produced by only main Thread
+possible outputs
+
+1> start method
+   Main Thread
+
+2> Main Thread
+   start method
+
+It is not recommended to override start method, other wise don't go for multiThreading concept
+
+
+-----------------------------------------------------------------------------------------------------
+super.start();
+
+
+public class MyThread extends Thread{
+	public void start(){
+		super.start();
+	System.out.println("start method");
+	}
+	public void run(){
+	System.out.println("run method");
+	}
+}
+----
+public class Test{
+
+public static void main(String[] args){
+	MyThread t=new MyThread();
+	t.start();
+	System.out.println("Main Thread");
+	}
+}
+
+
+---------------------
+
+two threads will get created 1: Main Thread 2: child Thread
+output possibilities
+
+1> run method
+   start method
+   Main method
+
+2>   start method
+     Main method
+     run method
+
+3>  start method
+    run method
+    Main method
+
+----------------------------------------------------------------------------------------------
+case 8:
+-----------
+Thread Life cycle:
+
+1.MyThread t=new MyThread();(new state)--------->2.Ready/Runnable-----Thread Schedular allocate processor----------------3.Running-----4.run()------5.Dead
+		t.start();
+
+----------------------------------------------------------------------------------------------------------------------------------------
+////MyThread t=new MyThread();->>>>new state or born state
+
+///t.start()---->Ready/Runnable
+
+///If Thread Schedular allocate processor -> the Thread will enter into running state
+
+///run method compleles now the thread enters into dead state. 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+case:9
+if we call already started thread once again it will Through Runtime Exception: IllegalThreadStateException
+
+after starting a thread if we are trying to re start the same thread then we will get runtime exception ==IllegalThreadStateException
+---
+Thread t=new Thread();
+
+t.start();
+'
+'
+'
+t.start();---------------> IllegalThreadStateException
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,86 @@
+1= What is synchronized keyword where we can appply?
+Ans:	Modifier applicable for methods,blocks,but not for variables and classes.
+
+2= Explain advantage of synchronized keyword
+Ans:	we can resolve data inconsistency problems
+
+3= Explain disadvantage of synchronized keywrd?
+Ans:	It increases waiting time of thread and creates performance problems
+
+4=	What is race condition?
+	If multiple threads are operationg simultaneously on same java object then there may be a chance of data inconsistency problem this is called race condition.
+
+we can over come this problem by using synchronized keyword
+
+5=	What is object lock and when it is equired
+Ans:	Every object in java has a unique lock which is nothing but object level lock.
+
+When ever a thread want's to execute instnace synchronized method , then the thread require object level lock
+
+6= What is class level lock and when it is required?
+Ans:	Every class in java has a unique lock which is nothing but class level lock
+
+When ever if a thread want's to execute static synchronized method then the thread require this class level lock
+
+7= Class level lock v/s Object level lock
+Ans:	class level lock
+	----------------
+	thread want's to execute static synchronized method then class level lock required
+
+---------------------
+	object level lock
+	---------------
+Thread want's to execute instance synchronized methd
+then object level lock is requied
+
+8=	While a thread executing synchronized method on the given object, is the remaining threads are allowed to execute any other synchronized method simultaneously on the same object
+
+Ans :NO
+
+
+9= whats is synchronized block in java 
+Ans:	A synchronized block of code is a block of code that is only executed by one thread at a time, preventing data races and ensuring that critical sections of code are accessed in a thread-safe manner.
+
+10= How to declare synchronized block,to get lock of current object
+Ans:	synchronized(this){
+	}
+
+11= How to declare synchronized block to get class level lock
+Ans:	synchronized(className.class){
+
+	}
+
+12=	What is the advantage of synchronized block over synchronized method
+Ans:	Performance by default will be improved
+	waiting times of thread will be reduced
+
+
+13= Is a thread can acquire multiple lock simultaneously
+Ans:	YES
+
+class X{
+public synchronized void m1(){ // here thread has lock on x object
+	
+Y y=new Y();  
+
+synchronized (y){
+	//here thread has locks of X and Y
+
+
+	Z z=new Z();
+	synchronized(z){
+	//here thread has locks of x,y,z
+	}
+	}
+	}
+}
+
+
+X x=new X();
+x.m1();
+--------------------------------------
+A thread can acquire multiple locks simultaneously from different objects
+
+==
+14=	Whatis synchronized statement?
+Ans:	The statments present in synchronized methods and statement present in synchronized block. are called synchronized statements

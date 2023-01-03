@@ -1,0 +1,194 @@
+yield method : 
+
+causes to pass current executing thread to give the chance for waiting threads of same priority
+If there is no waiting thread or all  waitinig threads have low priority then same thread can continue it's execution
+
+
+If multile threads are waiting with same priority then which waiting thread will get the chance we can't except it depends on thread schedular
+The thread which is yielded, when it will get the chance again it depends on thread schdeular, we can't except excatly 
+
+
+protype of yield: public static native void yield();
+
+
+affect of yield method on thread life cycle:
+----------------------------------------------
+1.MyThread t=new MyThread();
+	new/born state
+	|
+	|
+     t.start()
+	|
+	|
+2.	Ready/Runnable <-----------------------------------------------<!
+	|								|
+	|								|
+    (if Thread schedular allocate processor)				|	
+	|								|
+	|								|
+3.	Running								|
+	|								|	
+	|								|	
+      (Thread.yield())--------------------------------------------------^
+	|
+	|
+     (if run() method completes)
+	|
+	|
+4.	Dead 
+
+-----------------------------------------------------------
+
+public class FirstYield extends Thread {
+
+	public void run() {
+		// TODO Auto-generated method stub
+
+		for(int i=0;i<5;i++) {
+			System.out.println("child thread");
+			Thread.yield();
+			// yield method pass resource to main thread
+			// so main thread completes first
+		}
+	}
+}
+-------
+public class FirstYieldDemo {
+
+	public static void main(String[] args) {
+		FirstYield f=new FirstYield();
+		f.start();
+		for(int i=0;i<5;i++) {
+			System.out.println("Main Thread");
+		}
+	}
+}
+----------------------------------------------
+In the above program
+if we are commenting  Thread.yield();
+
+then both threads will execute simultaneously and we cannot excapt which thread will complete first
+
+if not commeted
+
+then child thread always call yield method
+because of that main thread will get chance more number of times and the 
+chance of completing main thread first is high
+
+Note: some platform won't provide proper support for yield method
+
+
+
+-------------------------------------------------------------------------------------------------------------------------
+ Join method
+
+If a thread wants to wait  untill completing some other thread then we shoud go for join method
+
+example: if a thread t1 wants to wait untill completing t2 then t1 has to call t2.join()
+	if t1 executes t2.join() then immediately t1 will be entered  into waiting state untill t2 completes
+
+	once a t2 compelete t1 can continue it's execution
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+example:  venue fixing activity                       wedding card printing                               wedding card distubution
+		(t1)						(t2)						(t3)
+		 |						 |						 |
+		 |						 |						 |
+								(t1.join();)					 |
+								 |   						 |	
+								 |						 |
+														 |
+														(t2.join();)
+
+
+wedding cards printing thread (t2): has to wait untill venue fixing thread (t1) completion hence t2 has to call t1.join();
+
+Wedding cards distibution thread (t3) has to wait untill wedding cards printing thread (t2) completion hence t3 has to call t2.join();
+
+
+compelte prototype of join method: public final void join() throws InterruptedException
+
+				   public final void join(long millisecond) throws InterruptedException
+	
+				   public final void join(long millisecond,int nanosecond) throws InterruptedException
+
+	
+every join method throw interrupted exeption which checked type exception
+
+Note: Every join method throws interrupted exception which is checked exception hence compulsury we should handle this exception either by using try cath or by throws keyword other wise we will get compile time error
+
+
+================================================================================================================================================
+impact of join method on thread life cycle
+
+-----------------
+1.MyThread t=new MyThread();
+	new/born state
+	|
+	|
+     t.start()
+	|
+	|												   
+2.	Ready/Runnable 		<-----------------------------------------------(if t2 completes)---------<|								        |									 (if time expires)         |
+	|						  (if waitig thread got interrupted)		   |	   |
+	|												   |
+    (if Thread schedular allocates processor)								waiting state
+	|												(blocked for joining)
+	|								 				   |
+3.	Running												   |
+	|									                           |
+	|												   |
+      (t2.join()/t2.join(1000)/t2.join(1000,100))---------------------------------------------------------->
+	|
+	|
+     (if run() method completes)
+	|
+	|
+4.	Dead 
+
+-------------------------------------------------------------------------------------------------------------------
+
+case 1:waiting of main thread untill completing child thread
+
+
+class MyThread extends Thread{
+
+public void run(){
+	for(int i=0;i<5;i++){
+	System.out.println("Seetha Thread");
+
+	try{
+	Thread.sleep(2000);
+	} catch(InterruptedException e){
+	
+	}
+	}
+	}
+}
+---------
+class ThreadJoinDemo{
+
+	public static void main(String[] args) throws InterruptedException{
+	MyThread t=new MyThread();
+	t.start();
+	t.join();---------------------line 1
+
+	for(int i=0;i<5;i++){
+	System.out.println("Ram Thread");
+	}
+	}
+}
+
+
+
+
+------------------------
+if we comment line 1: i.e   t.jon();
+
+then both main and child threads will be executed simultaneously and we cannot except excat output
+
+if we are commenting then main thread call join method on child thread object hence main thread will  wait 
+untill completing child thread, in this case output is
+
+Seetha Thread* 10times
+Ram Thread*10times 

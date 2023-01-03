@@ -1,0 +1,51 @@
+Thread class Constuctors:
+-----------------
+
+1.Thread t=new Thread();
+2.Thread t=new Thread(Runnable r);
+3.Thread t=new Thread(String name);
+4.Thread t=new Thread(Runnable  r,String name);
+5.Thread t=new Thread(ThreadGroup g,String name);
+6.Thread t=new Thread(ThreadGroup g,Runnable r);
+7.Thread t=new Thread(ThreadGroup g,Runnable r,String name);
+8.Thread t=new Thread(ThreadGroup g,Runnable r,String name,long stacksize);
+
+
+
+
+
+-----------------------------------------------------------
+Druga's Approach to define a Thread(not recommended to use)
+
+
+Hybrid Approach
+---------------------
+class MyThread extends Thread{
+
+public void run(){
+	System.out.prinltn("Child Thread");
+	}
+
+}
+
+
+----
+class ThreadDemo{
+
+public static void main(String[] args){
+
+	MyThread t=new MyThread();
+	Thread t1=new Thread(t);
+	t1.start();
+	System.out.println("Main Thread");
+}
+}
+----
+possible output
+
+1.> child Thread
+    Main Thread
+2.> Main Thread
+    child Thread
+
+

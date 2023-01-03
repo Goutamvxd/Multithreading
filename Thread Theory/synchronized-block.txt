@@ -1,0 +1,270 @@
+If very few lines of the code required synchronization
+then it is not recommended to declare entire method as
+synchronized we have to enclosed those few lines of the 
+code by using synchronized block
+
+
+The advantage of synchronized block over synchronized method is it reduces waiting time of threads
+and improves performance of the system.
+
+----------------------
+
+We can declare synchronized block as follows:
+
+1. To get lock of current object
+----------------------------------------
+	synchronized(this){
+	----
+	---
+	---
+	}
+if a thread got lock of current object
+then only it is allowed to execute this area
+============================================
+2. To get lock of particular object b
+-----------------------------------------
+	synchronized(b){
+	----
+	---
+	---
+	}
+
+if a thread got lock of particular object b
+then only it is allowed to execute this area
+=================================================
+3. To get class level lock
+----------------------------
+	synchronized(Display.class){
+	-----
+	----
+	---
+	}
+
+if a thread got class level lock of Display
+class, then only it is allowed to execute this area
+
+------------------------------------------------------------
+class X{
+
+static synchronized m1();
+static synchrinized m2();
+	     static m3();
+	synchronized m4();
+		     m5();     
+}
+
+
+=======================================
+
+class Display{
+
+public void displayn(){
+for(int i=0;i<10;i++){
+
+System.out.prinltn(i);
+
+try{
+Thread.sleep(2000);
+}
+catch(InterruptedException e){}
+
+}
+}
+
+public void displayc(){
+for(int i=65;i<=75;i++){
+System.out.println((char)i);
+
+try{
+Thread.sleep(2000);
+}
+catch(InterruptedException e){}
+
+}
+}
+}
+-----------------------
+class MyThread1 extends Thread{
+
+	Display d;
+	MyThread1 (Display d){
+	this.d=d;
+	}
+	public void  run(){
+	d.displayn();
+	}
+}
+------------------
+class MyThread2 extends Thread{
+	Display d;
+	MyThread2 (Display d){
+	this.d=d;
+	}
+	public void  run(){
+	d.displayc();
+	}
+}
+---------------
+class SynchronizedDemo{
+
+public static void main(String[] args){
+	Display d=new Display();
+	MyThread1 t1=new MyThread1(d);
+	MyThread2 t2=new MyThread2(d);
+	t1.start();
+	t2.start();
+
+//on the same object two thread want's to perform operation 
+	}
+}
+=================================
+
+output  will be irregular that leads to race condition/(data inconsistency)
+
+
+----------------------------------------------------------------------------------------------------
+public class Dis {
+
+	public void wish(String name) {
+	/*
+	 * 1 lakh lines of code
+	 */
+		
+		// object level lock
+			//synchronized (this) {
+		
+		
+		
+		
+		
+		//class level lock
+		
+		//synchronized (Dis.class) {
+			
+		/*
+		 * lock is not available for primitive types
+		 * 
+		 * that will through compile time error
+		 */
+		/*int x=10;
+		
+		synchronized (x) {
+			*/
+		
+		for(int i=0;i<10;i++) {
+			System.out.print("Good morning:");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+			System.out.println(name);
+		}
+		
+		
+		
+	}// checked for primitive type
+	
+		//} for class level
+			
+			/*
+			 * 1 lakh lines of code
+			 */
+		//}
+	}
+
+-----------------------------------------------------
+public class MyThread1 extends Thread{
+
+	Display d;
+	MyThread1(Display d){
+		this.d=d;
+		
+	}
+	public void run() {
+		d.displayn();
+	}
+}
+-----------------------------------------------
+public class MyThread2 extends Thread{
+
+	Display d;
+	MyThread2(Display d){
+		this.d=d;
+	}
+	public void run() {
+		d.displayc();
+	}
+}
+------------------------------------------
+public class SynchroDemo {
+
+	public static void main(String[] args) {
+		Display d=new Display();
+		MyThread1 t1=new MyThread1(d);
+		MyThread2 t2=new MyThread2(d);
+		t1.start();
+		t2.start();
+	}
+}
+=============================
+
+output will be  regular in nature
+--------------
+Display d1=new Display();
+Display d2=new Display();
+MyThread t1=new MyThread();
+MyThread t2=ne MyThread();
+
+t1.start();
+t2.start();
+
+----------
+output will be irregular in nature
+-----
+two threads operate simultaneously on distinct object so there will be data irregular output
+
+============================================================================
+    CLASS LEVEL LOCK
+---------------------------
+In MyThread class place for loop in synchronized block of class level
+
+synchronized(Display.class){
+
+for(int i=0;i<10;i++){
+	System.out.println("Good Morning");
+	try{
+	Thread.sleep(2000);
+	}
+	catch(InterruptedException e){}
+	System.out.println(name);
+	}
+}
+----
+
+In main class
+
+Display d1=new Display();
+Display d1=new Display();
+
+MyThread t1=new MyThread(d1,"Dhoni");
+MyThread t2=new MyThread(d2,"Yuvraj");
+
+t1.start();
+t2.start();
+
+---------------
+Output will be regular in nature
+======================================================================================================
+	Lock concept applicable for
+	.Object types
+	.Class types
+
+but not for primitive hence we can't pass primitive type
+as argument to synchronized block
+
+other wise we will get compile time error
+saying:	Unexcepted type
+	found:int
+	required:reference
+
+
+====================================================
